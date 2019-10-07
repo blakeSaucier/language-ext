@@ -1,17 +1,18 @@
 ﻿using System;
 using System.Linq;
 using Contoso.Core.Domain;
+using LanguageExt;
 
 namespace Contoso.Infrastructure.Data
 {
     public static class DbInitializer
     {
-        public static void Initialize(ContosoDbContext context)
+        public static Unit Initialize(ContosoDbContext context)
         {
             // Look for any students.
             if (context.Students.Any())
             {
-                return;   // DB has been seeded
+                return Unit.Default;   // DB has been seeded
             }
 
             var students = new Student[]
@@ -84,25 +85,25 @@ namespace Contoso.Infrastructure.Data
 
             var courses = new Course[]
             {
-                new Course {CourseId = 1050, Title = "Chemistry",      Credits = 3,
+                new Course { Title = "Chemistry",      Credits = 3,
                     DepartmentId = departments.Single( s => s.Name == "Engineering").DepartmentId
                 },
-                new Course {CourseId = 4022, Title = "Microeconomics", Credits = 3,
+                new Course { Title = "Microeconomics", Credits = 3,
                     DepartmentId = departments.Single( s => s.Name == "Economics").DepartmentId
                 },
-                new Course {CourseId = 4041, Title = "Macroeconomics", Credits = 3,
+                new Course { Title = "Macroeconomics", Credits = 3,
                     DepartmentId = departments.Single( s => s.Name == "Economics").DepartmentId
                 },
-                new Course {CourseId = 1045, Title = "Calculus",       Credits = 4,
+                new Course { Title = "Calculus",       Credits = 4,
                     DepartmentId = departments.Single( s => s.Name == "Mathematics").DepartmentId
                 },
-                new Course {CourseId = 3141, Title = "Trigonometry",   Credits = 4,
+                new Course { Title = "Trigonometry",   Credits = 4,
                     DepartmentId = departments.Single( s => s.Name == "Mathematics").DepartmentId
                 },
-                new Course {CourseId = 2021, Title = "Composition",    Credits = 3,
+                new Course { Title = "Composition",    Credits = 3,
                     DepartmentId = departments.Single( s => s.Name == "English").DepartmentId
                 },
-                new Course {CourseId = 2042, Title = "Literature",     Credits = 4,
+                new Course { Title = "Literature",     Credits = 4,
                     DepartmentId = departments.Single( s => s.Name == "English").DepartmentId
                 },
             };
@@ -244,7 +245,7 @@ namespace Contoso.Infrastructure.Data
                 }
             }
             context.SaveChanges();
-
+            return Unit.Default;
         }
     }
 }
