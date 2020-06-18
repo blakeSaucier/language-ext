@@ -4,6 +4,8 @@ using static LanguageExt.Prelude;
 using System;
 using System.Linq;
 using System.Diagnostics.Contracts;
+using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 using LanguageExt;
 
 namespace LanguageExt.ClassInstances
@@ -42,7 +44,7 @@ namespace LanguageExt.ClassInstances
 
         [Pure]
         public bool Equals(Arr<A> x, Arr<A> y) =>
-            Enumerable.SequenceEqual(x, y);
+            default(EqEnumerable<A>).Equals(x, y);
 
         [Pure]
         public int Compare(Arr<A> x, Arr<A> y)
@@ -50,8 +52,8 @@ namespace LanguageExt.ClassInstances
             int cmp = x.Value.Length.CompareTo(y.Value.Length);
             if (cmp != 0) return cmp;
 
-            var iterA = x.Value.AsEnumerable().GetEnumerator();
-            var iterB = y.Value.AsEnumerable().GetEnumerator();
+            using var iterA = x.Value.AsEnumerable().GetEnumerator();
+            using var iterB = y.Value.AsEnumerable().GetEnumerator();
             while(iterA.MoveNext() && iterB.MoveNext())
             {
                 cmp = default(OrdDefault<A>).Compare(iterA.Current, iterB.Current);
@@ -106,5 +108,20 @@ namespace LanguageExt.ClassInstances
                 from a in fa
                 from b in fb
                 select f(a, b));
+        
+        [Pure]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public Task<bool> EqualsAsync(Arr<A> x, Arr<A> y) =>
+            Equals(x, y).AsTask();
+
+        [Pure]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public Task<int> GetHashCodeAsync(Arr<A> x) =>
+            GetHashCode(x).AsTask();         
+        
+        [Pure]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public Task<int> CompareAsync(Arr<A> x, Arr<A> y) =>
+            Compare(x, y).AsTask();
     }
 }
